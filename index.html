@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasm Watermark</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #0f172a; margin-bottom: 15px; }
+        .upload { display: block; padding: 12px; background: #3b82f6; color: white; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
+        input[type="file"] { display: none; }
+        canvas { max-width: 100%; border-radius: 8px; margin-bottom: 10px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 10px; }
+        input, button { padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; }
+        input { flex: 1; }
+        button { background: #10b981; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🖼️ Watermark Qo'shish</h2>
+        <label class="upload" for="file">📁 Rasm Yuklash</label>
+        <input type="file" id="file" accept="image/*">
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <input type="text" id="text" placeholder="Matn yozing..." value="© Mening Rasmim">
+            <button onclick="apply()">✅ Qo'shish</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+
+        document.getElementById('file').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function apply() {
+            if (!img.src) return;
+            ctx.drawImage(img, 0, 0);
+            const text = document.getElementById('text').value;
+            const size = Math.max(24, canvas.width * 0.05);
+            ctx.font = `bold ${size}px Arial`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.strokeStyle = 'rgba(0, 0, 0,
